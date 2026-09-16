@@ -44,12 +44,12 @@ body{
 .topbar-inner{ max-width:640px; margin:0 auto; }
 .mark{ color: var(--gold); font-size: 22px; display:block; margin-bottom:4px; }
 .topbar h1{
-  font-family:'Gowun Batang', serif;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
   color: var(--cream);
-  font-size: 30px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   margin: 0;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
 }
 .class-label{
   display:inline-block;

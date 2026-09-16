@@ -5,7 +5,7 @@ const settingsRef = db.collection('settings').doc('main');
 
 let currentUser = null;      // { name, role: 'student' | 'teacher' }
 let currentRound = 1;
-let classLabel = '1학년 ○반';
+let classLabel = '1학년 5반'; // 반이 바뀌면 이 글자만 수정하면 돼요
 let entriesState = { general: [], mentor: [] };
 
 const $ = (sel, root=document) => root.querySelector(sel);
@@ -17,11 +17,10 @@ init();
 async function init() {
   const settingsSnap = await settingsRef.get();
   if (!settingsSnap.exists) {
-    await settingsRef.set({ round: 1, classLabel: '1학년 ○반' });
+    await settingsRef.set({ round: 1, classLabel });
     currentRound = 1;
   } else {
     currentRound = settingsSnap.data().round || 1;
-    classLabel = settingsSnap.data().classLabel || classLabel;
   }
   $('#classLabel').textContent = classLabel;
   $('#roundNoWrite').textContent = currentRound + '회차';
