@@ -280,7 +280,20 @@ function renderMineItem(item, div) {
   editBtn.textContent = '✏️ 수정';
   editBtn.addEventListener('click', () => renderMineItemEdit(item, div));
 
-  actions.appendChild(editBtn);
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'btn btn-ghost btn-sm';
+  deleteBtn.textContent = '🗑️ 삭제';
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm('이 칭찬을 삭제할까요? 되돌릴 수 없어요.')) return;
+    await praisesCol.doc(item.id).delete();
+    const list = div.parentElement;
+    div.remove();
+    if (list && list.children.length === 0) {
+      list.innerHTML = '<p class="hint">이번 회차에 작성한 칭찬이 아직 없어요.</p>';
+    }
+  });
+
+  actions.append(editBtn, deleteBtn);
   div.append(tag, body, actions);
 }
 
