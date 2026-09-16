@@ -249,7 +249,7 @@ async function loadMyRecords() {
     .where('round', '==', currentRound)
     .get();
 
-  const items = snap.docs.map(d => d.data());
+  const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   if (items.length === 0) {
     list.innerHTML = '<p class="hint">이번 회차에 작성한 칭찬이 아직 없어요.</p>';
     return;
@@ -258,14 +258,65 @@ async function loadMyRecords() {
   items.forEach(item => {
     const div = document.createElement('div');
     div.className = 'mine-item';
-    const tag = document.createElement('div');
-    tag.className = 'tag';
-    tag.textContent = (item.type === 'general' ? '💬 일반 칭찬' : '🤝 멘토·멘티') + ' → ' + item.target;
-    const body = document.createElement('div');
-    body.textContent = item.content;
-    div.append(tag, body);
     list.appendChild(div);
+    renderMineItem(item, div);
   });
+}
+
+function renderMineItem(item, div) {
+  div.innerHTML = '';
+
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.textContent = (item.type === 'general' ? '💬 일반 칭찬' : '🤝 멘토·멘티') + ' → ' + item.target;
+
+  const body = document.createElement('div');
+  body.textContent = item.content;
+
+  const actions = document.createElement('div');
+  actions.className = 'row-actions';
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-outline btn-sm';
+  editBtn.textContent = '✏️ 수정';
+  editBtn.addEventListener('click', () => renderMineItemEdit(item, div));
+
+  actions.appendChild(editBtn);
+  div.append(tag, body, actions);
+}
+
+function renderMineItemEdit(item, div) {
+  div.innerHTML = '';
+
+  const targetInput = document.createElement('input');
+  targetInput.type = 'text';
+  targetInput.value = item.target;
+
+  const contentInput = document.createElement('textarea');
+  contentInput.value = item.content;
+
+  const actions = document.createElement('div');
+  actions.className = 'row-actions';
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary btn-sm';
+  saveBtn.textContent = '저장';
+  saveBtn.addEventListener('click', async () => {
+    const newTarget = targetInput.value.trim() || '전체';
+    const newContent = contentInput.value.trim();
+    if (!newContent) { alert('내용을 입력해주세요.'); return; }
+    await praisesCol.doc(item.id).update({ target: newTarget, content: newContent });
+    item.target = newTarget;
+    item.content = newContent;
+    renderMineItem(item, div);
+  });
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-ghost btn-sm';
+  cancelBtn.textContent = '취소';
+  cancelBtn.addEventListener('click', () => renderMineItem(item, div));
+
+  actions.append(saveBtn, cancelBtn);
+  div.append(targetInput, contentInput, actions);
 }
 
 // ===================== 선생님: 대시보드 =====================
