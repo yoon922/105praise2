@@ -437,12 +437,21 @@ function exportPraisesToExcel() {
     유형: p.type === 'general' ? '일반 칭찬' : '멘토·멘티',
     작성자: p.authorName,
     대상: p.target,
-    내용: p.content
+    내용: p.content,
+    작성일시: formatTimestamp(p.createdAt)
   }));
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, `${currentRound}회차 칭찬`);
   XLSX.writeFile(wb, `칭찬합시다_${currentRound}회차.xlsx`);
+}
+
+function formatTimestamp(ts) {
+  if (!ts || typeof ts.toDate !== 'function') return '-';
+  return ts.toDate().toLocaleString('ko-KR', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit'
+  });
 }
 
 async function exportMembersToExcel() {
