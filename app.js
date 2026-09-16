@@ -412,9 +412,13 @@ async function loadMembers() {
 
     const top = document.createElement('div');
     top.className = 'row-top';
+    const count = cachedPraises.filter(p => p.authorName === s.name).length;
     const left = document.createElement('span');
     left.textContent = `${s.name} (학번 ${s.studentId})`;
-    top.append(left);
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = `칭찬 ${count}개`;
+    top.append(left, badge);
 
     const pwLine = document.createElement('div');
     pwLine.append('비밀번호: ');
